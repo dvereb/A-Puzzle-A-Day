@@ -106,6 +106,8 @@ void DemoPieces()
 		{
 			Piece piece = static_cast<Piece>(i);
 			DrawPiece(piece, y, x, rotation);
+			mvaddstr(y-1, x, "Piece");
+			mvaddstr(y-1, x + 6, std::to_string(i + 1).c_str());
 			x += 12;
 		}
 
