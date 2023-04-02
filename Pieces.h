@@ -69,7 +69,10 @@ typedef uint8_t Piece; // only need literally 8, not 8 bits, but hey.
  *   [][][]
  */
 
-unsigned PieceHeight(const Piece &piece);
+unsigned PieceHeight(const Piece &piece,
+                     Rotation rotation = Rotation::ROTATION_NONE);
+unsigned PieceWidth(const Piece &piece,
+                    Rotation rotation = Rotation::ROTATION_NONE);
 void DrawPiece(const Piece &piece, int y, int x,
                Rotation rotation = Rotation::ROTATION_NONE);
 

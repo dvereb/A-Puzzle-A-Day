@@ -96,13 +96,38 @@ void DemoPieces()
 	for(auto rotation : rotations)
 	{
 		clear();
-		int x = 1;
+
+		int x, y;
+
+		// Always same distance apart:
+		x = 10;
+		y = 2;
 		for(auto i = 0; i < 8; ++i)
 		{
 			Piece piece = static_cast<Piece>(i);
-			DrawPiece(piece, 2, x, rotation);
+			DrawPiece(piece, y, x, rotation);
 			x += 12;
 		}
+
+		// Always same width apart:
+		x = 2;
+		y = 10;
+		for(auto i = 0; i < 8; ++i)
+		{
+			Piece piece = static_cast<Piece>(i);
+			DrawPiece(piece, y, x, rotation);
+			x += PieceWidth(piece, rotation) * 2 + 2;
+		}
+		// Always same height apart, sharing first piece with same-width row:
+		x = 2;
+		y = 10 + PieceHeight(0, rotation) + 1;
+		for(auto i = 1; i < 8; ++i) // skip first
+		{
+			Piece piece = static_cast<Piece>(i);
+			DrawPiece(piece, y, x, rotation);
+			y += PieceHeight(piece, rotation) + 1;
+		}
+
 		getch();
 	}
 	move(8, 2);

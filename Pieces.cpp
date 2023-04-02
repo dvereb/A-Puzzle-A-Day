@@ -3,33 +3,126 @@
 #include <curses.h>
 #include <stdlib.h> // exit()
 
-unsigned PieceHeight(const Piece &piece)
+unsigned PieceHeight(const Piece &piece, Rotation rotation)
 {
 	switch(piece)
 	{
 	case PIECE_ONE:
-		return 2;
+		switch(rotation)
+		{
+		default:
+		case ROTATION_NONE:
+		case ROTATION_180:
+			return 2;
+		case ROTATION_90:
+		case ROTATION_270:
+			return 3;
+		};
 		break;
 	case PIECE_TWO:
-		return 4;
-		break;
 	case PIECE_THREE:
-		return 4;
+		switch(rotation)
+		{
+		default:
+		case ROTATION_NONE:
+		case ROTATION_180:
+			return 4;
+		case ROTATION_90:
+		case ROTATION_270:
+			return 2;
+		};
 		break;
 	case PIECE_FOUR:
-		return 3;
+	case PIECE_SEVEN:
+		switch(rotation)
+		{
+		default:
+		case ROTATION_NONE:
+		case ROTATION_180:
+			return 3;
+		case ROTATION_90:
+		case ROTATION_270:
+			return 2;
+		};
 		break;
 	case PIECE_FIVE:
+	case PIECE_EIGHT:
 		return 3;
 		break;
 	case PIECE_SIX:
-		return 2;
+		switch(rotation)
+		{
+		default:
+		case ROTATION_NONE:
+		case ROTATION_180:
+			return 2;
+		case ROTATION_90:
+		case ROTATION_270:
+			return 4;
+		};
 		break;
+	}
+
+	std::exit(-1);
+}
+
+unsigned PieceWidth(const Piece &piece, Rotation rotation)
+{
+	switch(piece)
+	{
+	case PIECE_ONE:
+		switch(rotation)
+		{
+		default:
+		case ROTATION_NONE:
+		case ROTATION_180:
+			return 3;
+		case ROTATION_90:
+		case ROTATION_270:
+			return 2;
+		};
+		break;
+	case PIECE_TWO:
+	case PIECE_THREE:
+		switch(rotation)
+		{
+		default:
+		case ROTATION_NONE:
+		case ROTATION_180:
+			return 2;
+		case ROTATION_90:
+		case ROTATION_270:
+			return 4;
+		};
+		break;
+	case PIECE_FOUR:
 	case PIECE_SEVEN:
-		return 3;
+		switch(rotation)
+		{
+		default:
+		case ROTATION_NONE:
+		case ROTATION_180:
+			return 2;
+		case ROTATION_90:
+		case ROTATION_270:
+			return 3;
+		};
 		break;
+	case PIECE_FIVE:
 	case PIECE_EIGHT:
 		return 3;
+		break;
+	case PIECE_SIX:
+		switch(rotation)
+		{
+		default:
+		case ROTATION_NONE:
+		case ROTATION_180:
+			return 4;
+		case ROTATION_90:
+		case ROTATION_270:
+			return 2;
+		};
 		break;
 	}
 
