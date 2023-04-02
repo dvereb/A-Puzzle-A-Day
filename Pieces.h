@@ -3,6 +3,13 @@
 
 #include <stdint.h>
 
+enum Rotation {
+	ROTATION_NONE,
+	ROTATION_90,
+	ROTATION_180,
+	ROTATION_270,
+};
+
 #define NUM_PIECES 8
 typedef uint8_t Piece; // only need literally 8, not 8 bits, but hey.
 
@@ -20,7 +27,7 @@ typedef uint8_t Piece; // only need literally 8, not 8 bits, but hey.
  *   []
  */
 
-#define PIECE_TRHEE 0x2
+#define PIECE_THREE 0x2
 /*
  *     []
  *     []
@@ -62,6 +69,8 @@ typedef uint8_t Piece; // only need literally 8, not 8 bits, but hey.
  *   [][][]
  */
 
-void DrawPiece(const Piece &piece, int y, int x);
+unsigned PieceHeight(const Piece &piece);
+void DrawPiece(const Piece &piece, int y, int x,
+               Rotation rotation = Rotation::ROTATION_NONE);
 
 #endif

@@ -1,6 +1,6 @@
-build/apad: main.cpp
+build/apad: main.cpp Pieces.cpp
 	mkdir -p build
-	clang++ -g -O0 -std=c++17 -o $@ $? -lncurses
+	clang++ -g -O0 -std=c++17 -o $@ $^ -lncurses
 
 clean:
 	rm build/apad

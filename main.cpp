@@ -3,11 +3,15 @@
 #include <curses.h>
 #include <signal.h>
 
+#include <set>
 #include <string>
 #include <unordered_map>
 
 static void finish(int sig);
 void init_colors();
+
+// DEBUG:
+void DemoPieces();
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +23,29 @@ int main(int argc, char *argv[])
 
 	if(has_colors())
 		init_colors();
+
+	if(argc == 2 && std::string(argv[1]) == "-d")
+	{
+		DemoPieces();
+
+		finish(0);
+	}
+
+	// for each piece passed in, render it:
+	{
+		int y = 1;
+		for(auto input = 1; input < argc; ++input)
+		{
+			try {
+				Piece piece = 0b111 & std::atoi(argv[input]);
+				DrawPiece(piece, y, 1);
+				y += PieceHeight(piece) + 1;
+			} catch(const std::exception &e) {
+				mvaddstr(y, 1, "std::atoi error");
+				y += 2;
+			}
+		}
+	}
 
 	int num = 0;
 	while(true)
@@ -36,6 +63,7 @@ int main(int argc, char *argv[])
 static void finish(int sig)
 {
 	endwin();
+	std::exit(0);
 }
 
 void init_colors()
@@ -55,4 +83,27 @@ void init_colors()
 	init_pair(5, COLOR_CYAN,    COLOR_BLACK);
 	init_pair(6, COLOR_MAGENTA, COLOR_BLACK);
 	init_pair(7, COLOR_WHITE,   COLOR_BLACK);
+}
+
+void DemoPieces()
+{
+	std::set rotations = {
+		Rotation::ROTATION_NONE,
+		Rotation::ROTATION_90,
+		Rotation::ROTATION_180,
+		Rotation::ROTATION_270,
+	};
+	for(auto rotation : rotations)
+	{
+		clear();
+		int x = 1;
+		for(auto i = 0; i < 8; ++i)
+		{
+			Piece piece = static_cast<Piece>(i);
+			DrawPiece(piece, 2, x, rotation);
+			x += 12;
+		}
+		getch();
+	}
+	move(8, 2);
 }
