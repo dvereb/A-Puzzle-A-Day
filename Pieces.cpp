@@ -330,3 +330,116 @@ void DrawPiece(const Piece &piece, int y, int x, Rotation rotation)
 	}
 }
 
+PieceData RotatePieceData(const PieceData &data, Rotation rotation)
+{
+	PieceData rtn;
+
+	if(!data.size())
+		return rtn;
+	if(!data[0].size())
+		return rtn;
+
+	// Step 1: Size it:
+	switch(rotation)
+	{
+	default:
+	case Rotation::ROTATION_NONE:
+	case Rotation::ROTATION_180:
+		rtn.resize(data.size());
+		for(auto &row : rtn)
+			row.resize(data[0].size());
+		break;
+	case Rotation::ROTATION_90:
+	case Rotation::ROTATION_270:
+		rtn.resize(data[0].size());
+		for(auto &row : rtn)
+			row.resize(data.size());
+		break;
+	};
+
+	switch(rotation)
+	{
+	default:
+	case Rotation::ROTATION_NONE:
+		rtn = data;
+		break;
+	case Rotation::ROTATION_90:
+		rtn = data;
+		// TODO(dev):
+		// TODO(dev): x's become y's
+		// TODO(dev): y's become max x - x's
+		// TODO(dev):
+		break;
+	case Rotation::ROTATION_180:
+		for(size_t row = 0; row < data.size(); ++row)
+		{
+			size_t opposite_row = data.size() - row - 1;
+			for(size_t col = 0; col < data[row].size(); ++col)
+			{
+				size_t opposite_col = data[opposite_row].size() - col - 1;
+				rtn[opposite_row][opposite_col] = data[row][col];
+			}
+		}
+		break;
+	case Rotation::ROTATION_270:
+		rtn = data;
+		// TODO(dev):
+		// TODO(dev): I mean we could just rotate 90 & then 180,
+		// TODO(dev):  but that seems like the cheap way out.
+		// TODO(dev):
+		break;
+	};
+
+	return rtn;
+}
+
+unsigned PD_PieceHeight(const PieceData &data)
+{
+	return data.size();
+}
+unsigned PD_PieceWidth(const PieceData &data)
+{
+	size_t rtn = 0;
+	for(auto row : data)
+		rtn = std::max(rtn, row.size());
+	return rtn;
+}
+
+unsigned PD_PieceHeight(const Piece &piece, Rotation rotation)
+{
+	switch(rotation)
+	{
+	default:
+	case Rotation::ROTATION_NONE:
+	case Rotation::ROTATION_180:
+		return pieces.at(piece).size();
+		break;
+	case Rotation::ROTATION_90:
+	case Rotation::ROTATION_270:
+		return PD_PieceHeight(RotatePieceData(pieces.at(piece), Rotation::ROTATION_90));
+		break;
+	};
+}
+
+unsigned PD_PieceWidth(const Piece &piece, Rotation rotation)
+{
+	size_t rtn = 0;
+	for(auto row : pieces.at(piece))
+		rtn = std::max(rtn, row.size());
+	return rtn;
+}
+
+void PD_DrawPiece(const Piece &piece, int y, int x, Rotation rotation)
+{
+	attrset(COLOR_PAIR(static_cast<int>(piece) % 8));
+
+	auto data = RotatePieceData(pieces.at(piece), rotation);
+	for(size_t row = 0; row < data.size(); ++row)
+	{
+		for(size_t col = 0; col < data[row].size(); ++col)
+		{
+			if(data[row][col])
+				mvaddstr(y + row, x + (col * 2), "[]");
+		}
+	}
+}
