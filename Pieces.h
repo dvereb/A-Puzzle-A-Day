@@ -11,6 +11,11 @@ enum Rotation {
 	ROTATION_180,
 	ROTATION_270,
 };
+enum Flip {
+	FLIP_NONE,
+	FLIP_HORIZONTAL,
+	FLIP_VERTICAL,
+};
 
 #define NUM_PIECES 8
 typedef uint8_t Piece; // only need literally 8, not 8 bits, but hey.
@@ -148,6 +153,7 @@ void DrawPiece(const Piece &piece, int y, int x,
                Rotation rotation = Rotation::ROTATION_NONE);
 
 PieceData RotatePieceData(const PieceData &data, Rotation rotation);
+void FlipPieceData(PieceData &data, Flip flip);
 unsigned PD_PieceHeight(const PieceData &data);
 unsigned PD_PieceWidth(const PieceData &data);
 void PD_DrawPiece(const PieceData &data, int y, int x, int color = 0);

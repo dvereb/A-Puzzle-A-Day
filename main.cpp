@@ -140,5 +140,31 @@ void DemoPieces()
 
 		getch();
 	}
+
+	std::vector<Flip> flips = {
+		Flip::FLIP_NONE,
+		Flip::FLIP_HORIZONTAL,
+		Flip::FLIP_HORIZONTAL,
+		Flip::FLIP_VERTICAL,
+		Flip::FLIP_VERTICAL,
+	};
+
+	std::vector<PieceData> piece_data_to_flip;
+	for(size_t p = 0; p < pieces.size(); ++p)
+		piece_data_to_flip.push_back(pieces.at(p));
+	for(const auto &flip : flips)
+	{
+		clear();
+		int y = 2;
+		int i = 0;
+		for(auto &data : piece_data_to_flip)
+		{
+			FlipPieceData(data, flip);
+			PD_DrawPiece(data, y, 2, i++);
+			y += PD_PieceHeight(data) + 2;
+		}
+		getch();
+	}
+
 	move(8, 2);
 }

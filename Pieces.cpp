@@ -406,6 +406,54 @@ PieceData RotatePieceData(const PieceData &data, Rotation rotation)
 	return rtn;
 }
 
+void FlipPieceData(PieceData &data, Flip flip)
+{
+	if(!data.size())
+		return;
+	if(!data[0].size())
+		return;
+
+	switch(flip)
+	{
+	default:
+	case Flip::FLIP_NONE:
+		return;
+	case Flip::FLIP_HORIZONTAL:
+		// Go through EVERY row:
+		for(size_t row = 0; row < data.size(); ++row)
+		{
+			// And swap the front half with the back half
+			// [1][2][3][2][1]
+			//  ^  ^     ^  ^
+			//  |  +-----+  |  <-- second
+			//  |           |
+			//  +-----------+  <-- first
+			for(size_t col = 0; col < data[0].size() / 2; ++col)
+			{
+				// for each row, swap columns
+				bool temp = data[row][col];
+				data[row][col] = data[row][data[0].size() - col - 1];
+				data[row][data[0].size() - col - 1] = temp;
+			}
+		}
+		break;
+	case Flip::FLIP_VERTICAL:
+		// Go through EVERY col:
+		for(size_t col = 0; col < data[0].size(); ++col)
+		{
+			// And swap the top half with the bottom half
+			for(size_t row = 0; row < data.size() / 2; ++row)
+			{
+				// for each row, swap columns
+				bool temp = data[row][col];
+				data[row][col] = data[data.size() - row - 1][col];
+				data[data.size() - row - 1][col] = temp;
+			}
+		}
+		break;
+	};
+}
+
 unsigned PD_PieceHeight(const PieceData &data)
 {
 	return data.size();
