@@ -1,0 +1,31 @@
+# Grid:
+[0  1  2  3  4  5 ]
+[6  7  8  9  10 11]
+[12 13 14 15 16 17 18]
+[19 20 21 22 23 24 25]
+[26 27 28 29 30 31 32]
+[33 34 35 36 37 38 39]
+[40 41 42]
+
+
+# Order of Operations:
+ When rendering, always perform the actions in this order:
+ 1. Flips, if set
+ 2. Rotation
+
+
+# All Piece Placement Format:
+ Assumes you're placing, in order, all pieces
+ 2 bits for flip, 2 bits for rotation, 6 bits for position, 8 times.
+ 10 * 8 = 80 bits.
+
+
+# TODO(dev):
+# Individual Piece Placement Format:
+ 3 bits for piece number (#0 - #7)
+ 2 bits for flip
+  (first bit = horizontal flip on)
+  (second bit = vertical flip on)
+ 2 bits for rotation
+  (none, 90, 180, 270)
+ 6 bits for position

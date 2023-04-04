@@ -1,3 +1,4 @@
+#include "Demo.h"
 #include "Pieces.h"
 
 #include <curses.h>
@@ -10,8 +11,7 @@
 static void finish(int sig);
 void init_colors();
 
-// DEBUG:
-void DemoPieces();
+void PlacePiece(Piece piece, const std::vector<Flip> &flips, Rotation rotation, int y, int x);
 
 int main(int argc, char *argv[])
 {
@@ -33,16 +33,33 @@ int main(int argc, char *argv[])
 
 	// for each piece passed in, render it:
 	{
+		int x = 1;
 		int y = 1;
+		auto count = 0;
 		for(auto input = 1; input < argc; ++input)
 		{
 			try {
-				Piece piece = 0b111 & std::atoi(argv[input]);
-				PD_DrawPiece(pieces.at(piece), y, 1);
-				y += PD_PieceHeight(pieces.at(piece)) + 1;
+				unsigned long input_val = std::atoi(argv[input]);
+				Piece piece = 0b111 & input_val;
+				Flip horizontal = (0b1000 & input_val) ? Flip::FLIP_HORIZONTAL : Flip::FLIP_NONE;
+				Flip vertical = (0b10000 & input_val) ? Flip::FLIP_VERTICAL : Flip::FLIP_NONE;
+				Rotation rotation = static_cast<Rotation>((0b1100000 & input_val) >> 5);
+				PlacePiece(piece,
+				           { horizontal, vertical },
+				           rotation,
+				           y,
+				           x);
+				// y += PD_PieceHeight(pieces.at(piece)) + 1;
+				y += 5;
 			} catch(const std::exception &e) {
 				mvaddstr(y, 1, "std::atoi error");
-				y += 2;
+				y += 3;
+			}
+			if(++count > 7)
+			{
+				count = 0;
+				y = 1;
+				x += 10;
 			}
 		}
 	}
@@ -85,86 +102,14 @@ void init_colors()
 	init_pair(7, COLOR_WHITE,   COLOR_BLACK);
 }
 
-void DemoPieces()
+void PlacePiece(Piece piece, const std::vector<Flip> &flips, Rotation rotation, int y, int x)
 {
-	std::set rotations = {
-		Rotation::ROTATION_NONE,
-		Rotation::ROTATION_90,
-		Rotation::ROTATION_180,
-		Rotation::ROTATION_270,
-	};
-	for(auto rotation : rotations)
-	{
-		clear();
+	PieceData data = pieces.at(piece);
 
-		int x, y;
+	for(Flip flip : flips)
+		FlipPieceData(data, flip);
 
-		// Always same distance apart:
-		x = 10;
-		y = 2;
-		for(auto i = 0; i < 8; ++i)
-		{
-			PieceData data = pieces.at(i);
-			data = RotatePieceData(data, rotation);
-			PD_DrawPiece(data, y, x, i);
-			mvaddstr(y-1, x, "Piece");
-			mvaddstr(y-1, x + 6, std::to_string(i + 1).c_str());
-			x += 12;
-		}
+	data = RotatePieceData(data, rotation);
 
-		// Always same width apart:
-		x = 2;
-		y = 10;
-		for(auto i = 0; i < 8; ++i)
-		{
-			PieceData data = pieces.at(i);
-			data = RotatePieceData(data, rotation);
-			PD_DrawPiece(data, y, x, i);
-			x += PD_PieceWidth(data) * 2 + 2;
-		}
-		// Always same height apart, sharing first piece with same-width row:
-		x = 2;
-		y = 10;
-		{
-			auto data = pieces.at(0);
-			data = RotatePieceData(data, rotation);
-			y += PD_PieceHeight(data) + 1;
-		}
-		for(auto i = 1; i < 8; ++i) // skip first
-		{
-			PieceData data = pieces.at(i);
-			data = RotatePieceData(data, rotation);
-			PD_DrawPiece(data, y, x, i);
-			y += PD_PieceHeight(data) + 1;
-		}
-
-		getch();
-	}
-
-	std::vector<Flip> flips = {
-		Flip::FLIP_NONE,
-		Flip::FLIP_HORIZONTAL,
-		Flip::FLIP_HORIZONTAL,
-		Flip::FLIP_VERTICAL,
-		Flip::FLIP_VERTICAL,
-	};
-
-	std::vector<PieceData> piece_data_to_flip;
-	for(size_t p = 0; p < pieces.size(); ++p)
-		piece_data_to_flip.push_back(pieces.at(p));
-	for(const auto &flip : flips)
-	{
-		clear();
-		int y = 2;
-		int i = 0;
-		for(auto &data : piece_data_to_flip)
-		{
-			FlipPieceData(data, flip);
-			PD_DrawPiece(data, y, 2, i++);
-			y += PD_PieceHeight(data) + 2;
-		}
-		getch();
-	}
-
-	move(8, 2);
+	PD_DrawPiece(data, y, x, piece);
 }
