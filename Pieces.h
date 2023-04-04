@@ -149,12 +149,8 @@ void DrawPiece(const Piece &piece, int y, int x,
 
 PieceData RotatePieceData(const PieceData &data, Rotation rotation);
 unsigned PD_PieceHeight(const PieceData &data);
-unsigned PD_PieceHeight(const Piece &piece,
-                     Rotation rotation = Rotation::ROTATION_NONE);
 unsigned PD_PieceWidth(const PieceData &data);
-unsigned PD_PieceWidth(const Piece &piece,
-                    Rotation rotation = Rotation::ROTATION_NONE);
-void PD_DrawPiece(const Piece &piece, int y, int x,
-                  Rotation rotation = Rotation::ROTATION_NONE);
+void PD_DrawPiece(const PieceData &data, int y, int x, int color = 0);
+
 
 #endif

@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
 		{
 			try {
 				Piece piece = 0b111 & std::atoi(argv[input]);
-				PD_DrawPiece(piece, y, 1);
-				y += PD_PieceHeight(piece) + 1;
+				PD_DrawPiece(pieces.at(piece), y, 1);
+				y += PD_PieceHeight(pieces.at(piece)) + 1;
 			} catch(const std::exception &e) {
 				mvaddstr(y, 1, "std::atoi error");
 				y += 2;
@@ -104,8 +104,9 @@ void DemoPieces()
 		y = 2;
 		for(auto i = 0; i < 8; ++i)
 		{
-			Piece piece = static_cast<Piece>(i);
-			PD_DrawPiece(piece, y, x, rotation);
+			PieceData data = pieces.at(i);
+			data = RotatePieceData(data, rotation);
+			PD_DrawPiece(data, y, x, i);
 			mvaddstr(y-1, x, "Piece");
 			mvaddstr(y-1, x + 6, std::to_string(i + 1).c_str());
 			x += 12;
@@ -116,18 +117,25 @@ void DemoPieces()
 		y = 10;
 		for(auto i = 0; i < 8; ++i)
 		{
-			Piece piece = static_cast<Piece>(i);
-			PD_DrawPiece(piece, y, x, rotation);
-			x += PD_PieceWidth(piece, rotation) * 2 + 2;
+			PieceData data = pieces.at(i);
+			data = RotatePieceData(data, rotation);
+			PD_DrawPiece(data, y, x, i);
+			x += PD_PieceWidth(data) * 2 + 2;
 		}
 		// Always same height apart, sharing first piece with same-width row:
 		x = 2;
-		y = 10 + PD_PieceHeight(0, rotation) + 1;
+		y = 10;
+		{
+			auto data = pieces.at(0);
+			data = RotatePieceData(data, rotation);
+			y += PD_PieceHeight(data) + 1;
+		}
 		for(auto i = 1; i < 8; ++i) // skip first
 		{
-			Piece piece = static_cast<Piece>(i);
-			PD_DrawPiece(piece, y, x, rotation);
-			y += PD_PieceHeight(piece, rotation) + 1;
+			PieceData data = pieces.at(i);
+			data = RotatePieceData(data, rotation);
+			PD_DrawPiece(data, y, x, i);
+			y += PD_PieceHeight(data) + 1;
 		}
 
 		getch();

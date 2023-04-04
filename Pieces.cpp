@@ -418,35 +418,10 @@ unsigned PD_PieceWidth(const PieceData &data)
 	return rtn;
 }
 
-unsigned PD_PieceHeight(const Piece &piece, Rotation rotation)
+void PD_DrawPiece(const PieceData &data, int y, int x, int color)
 {
-	switch(rotation)
-	{
-	default:
-	case Rotation::ROTATION_NONE:
-	case Rotation::ROTATION_180:
-		return pieces.at(piece).size();
-		break;
-	case Rotation::ROTATION_90:
-	case Rotation::ROTATION_270:
-		return PD_PieceHeight(RotatePieceData(pieces.at(piece), Rotation::ROTATION_90));
-		break;
-	};
-}
+	attrset(COLOR_PAIR(static_cast<int>(color) % 8));
 
-unsigned PD_PieceWidth(const Piece &piece, Rotation rotation)
-{
-	size_t rtn = 0;
-	for(auto row : pieces.at(piece))
-		rtn = std::max(rtn, row.size());
-	return rtn;
-}
-
-void PD_DrawPiece(const Piece &piece, int y, int x, Rotation rotation)
-{
-	attrset(COLOR_PAIR(static_cast<int>(piece) % 8));
-
-	auto data = RotatePieceData(pieces.at(piece), rotation);
 	for(size_t row = 0; row < data.size(); ++row)
 	{
 		for(size_t col = 0; col < data[row].size(); ++col)
