@@ -357,6 +357,7 @@ PieceData RotatePieceData(const PieceData &data, Rotation rotation)
 		break;
 	};
 
+	// Step 2: Move it:
 	switch(rotation)
 	{
 	default:
@@ -364,11 +365,17 @@ PieceData RotatePieceData(const PieceData &data, Rotation rotation)
 		rtn = data;
 		break;
 	case Rotation::ROTATION_90:
-		rtn = data;
-		// TODO(dev):
-		// TODO(dev): x's become y's
-		// TODO(dev): y's become max x - x's
-		// TODO(dev):
+		for(size_t row = 0; row < data.size(); ++row)
+		{
+			size_t opposite_row = data.size() - row - 1;
+			for(size_t col = 0; col < data[row].size(); ++col)
+			{
+				size_t opposite_col = data[opposite_row].size() - col - 1;
+				// NOTE(dev): x's become y's
+				// NOTE(dev): y's become max x - x's
+				rtn[col][opposite_row] = data[row][col];
+			}
+		}
 		break;
 	case Rotation::ROTATION_180:
 		for(size_t row = 0; row < data.size(); ++row)
@@ -382,11 +389,17 @@ PieceData RotatePieceData(const PieceData &data, Rotation rotation)
 		}
 		break;
 	case Rotation::ROTATION_270:
-		rtn = data;
-		// TODO(dev):
-		// TODO(dev): I mean we could just rotate 90 & then 180,
-		// TODO(dev):  but that seems like the cheap way out.
-		// TODO(dev):
+		for(size_t row = 0; row < data.size(); ++row)
+		{
+			size_t opposite_row = data.size() - row - 1;
+			for(size_t col = 0; col < data[row].size(); ++col)
+			{
+				size_t opposite_col = data[opposite_row].size() - col - 1;
+				// NOTE(dev): x's become max y - y's
+				// NOTE(dev): y's become x's
+				rtn[opposite_col][row] = data[row][col];
+			}
+		}
 		break;
 	};
 
