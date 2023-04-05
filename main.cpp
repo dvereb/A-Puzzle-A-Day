@@ -12,6 +12,7 @@ static void finish(int sig);
 void init_colors();
 
 void PlacePiece(Piece piece, const std::vector<Flip> &flips, Rotation rotation, int y, int x);
+std::string PlaceName(unsigned int position);
 void GetPosition(unsigned long position, int &y, int &x);
 
 int main(int argc, char *argv[])
@@ -31,6 +32,16 @@ int main(int argc, char *argv[])
 
 		finish(0);
 	}
+
+	// DEBUG: Draw Grid
+	for(auto row = 0; row < 2; ++row)
+		for(auto col = 0; col < 6; ++col)
+			mvaddstr(row, col * 2, PlaceName((6 * row) + col).c_str());
+	for(auto row = 2; row < 6; ++row)
+		for(auto col = 0; col < 7; ++col)
+			mvaddstr(row, col * 2, PlaceName(12 + (7 * (row - 2) + col)).c_str());
+	for(auto col = 0; col < 3; ++col)
+		mvaddstr(6, col * 2, PlaceName(40 + col).c_str());
 
 	// for each piece passed in, render it:
 	{
@@ -115,6 +126,20 @@ void PlacePiece(Piece piece, const std::vector<Flip> &flips, Rotation rotation, 
 	data = RotatePieceData(data, rotation);
 
 	PD_DrawPiece(data, y, x, piece);
+}
+
+std::string PlaceName(unsigned int position)
+{
+	static const std::vector<std::string> months =
+		{ "JA", "FE", "MR", "AP", "MY", "JN", "JL", "AU", "SE", "OC", "NO", "DE", };
+
+	if(position < 12)
+		return months[position];
+
+	auto rtn = std::to_string(position - 11);
+	if(rtn.size() == 1)
+		rtn = "0" + rtn;
+	return rtn;
 }
 
 void GetPosition(unsigned long position, int &y, int &x)
