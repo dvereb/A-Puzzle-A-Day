@@ -15,6 +15,8 @@ void PlacePiece(Piece piece, const std::vector<Flip> &flips, Rotation rotation, 
 std::string PlaceName(unsigned int position);
 void GetPosition(unsigned long position, int &y, int &x);
 
+void DrawGrid(int y = 0, int x = 0);
+
 int main(int argc, char *argv[])
 {
 	initscr();             /* initialize the curses library */
@@ -33,18 +35,9 @@ int main(int argc, char *argv[])
 		finish(0);
 	}
 
-	// DEBUG: Draw Grid
-	for(auto row = 0; row < 2; ++row)
-		for(auto col = 0; col < 6; ++col)
-			mvaddstr(row, col * 2, PlaceName((6 * row) + col).c_str());
-	for(auto row = 2; row < 6; ++row)
-		for(auto col = 0; col < 7; ++col)
-			mvaddstr(row, col * 2, PlaceName(12 + (7 * (row - 2) + col)).c_str());
-	for(auto col = 0; col < 3; ++col)
-		mvaddstr(6, col * 2, PlaceName(40 + col).c_str());
-
 	// for each piece passed in, render it:
 	{
+		DrawGrid();
 		int x = 1;
 		int y = 1;
 		auto count = 0;
@@ -194,4 +187,17 @@ void GetPosition(unsigned long position, int &y, int &x)
 
 	x = y = 0;
 	return;
+}
+
+void DrawGrid(int y, int x)
+{
+	// DEBUG: Draw Grid
+	for(auto row = 0; row < 2; ++row)
+		for(auto col = 0; col < 6; ++col)
+			mvaddstr(y+ row, x + col * 2, PlaceName((6 * row) + col).c_str());
+	for(auto row = 2; row < 6; ++row)
+		for(auto col = 0; col < 7; ++col)
+			mvaddstr(y +row, x + col * 2, PlaceName(12 + (7 * (row - 2) + col)).c_str());
+	for(auto col = 0; col < 3; ++col)
+		mvaddstr(y + 6, x + col * 2, PlaceName(40 + col).c_str());
 }
