@@ -183,6 +183,7 @@ void GetPosition(unsigned long position, int &y, int &x)
 	{
 		y = 6;
 		x = position - 40;
+		return;
 	}
 
 	x = y = 0;
